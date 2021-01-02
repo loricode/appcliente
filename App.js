@@ -1,21 +1,71 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, SafeAreaView, VirtualizedList } from 'react-native';
 
-export default function App() {
+import axios from 'axios';
+
+import  Card from './components/Card';
+
+const baseURL = "http://192.168.1.10:8000/"; 
+
+const App = () =>  {
+    
+  const [ listCliente, setListCliente ] = useState([])
+
+  useEffect(() => {
+      getlistCliente()
+  }, [])
+
+
+  const getlistCliente = async() => {
+    
+     const { data } = await axios.get(baseURL+'clientes/')
+     const { clientes } = data 
+     setListCliente(clientes)
+     console.log(clientes)
+      
+  }
+
+  const getItemCount = () => {
+    return listCliente.length;
+  }
+
+  const getItem = (data, index) => {
+    const item = data[index]
+    return { ...item }
+  }
+
+  const renderItem = ({ item } ) => ( 
+     <Card nombre={item.nombre} apellido={item.apellido} celular={item.celular}  />
+  );
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    
+    <SafeAreaView style={styles.container}>
+
+      <VirtualizedList
+        initialNumToRender={4}
+        data={listCliente}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        getItemCount={getItemCount}
+        getItem={getItem}
+      />
+
+    </SafeAreaView>
+   
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: StatusBar.currentHeight || 22,
+    
   },
+  
+
 });
+
+export default App;
