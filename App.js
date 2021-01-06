@@ -1,71 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, VirtualizedList } from 'react-native';
+import 'react-native-gesture-handler';
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons'; 
+import Home from './screens/Home';
+import Create from './screens/Create';
 
-import axios from 'axios';
-
-import  Card from './components/Card';
-
-const baseURL = "http://192.168.1.10:8000/"; 
+const Tab = createBottomTabNavigator();
 
 const App = () =>  {
     
-  const [ listCliente, setListCliente ] = useState([])
-
-  useEffect(() => {
-      getlistCliente()
-  }, [])
-
-
-  const getlistCliente = async() => {
-    
-     const { data } = await axios.get(baseURL+'clientes/')
-     const { clientes } = data 
-     setListCliente(clientes)
-     console.log(clientes)
-      
-  }
-
-  const getItemCount = () => {
-    return listCliente.length;
-  }
-
-  const getItem = (data, index) => {
-    const item = data[index]
-    return { ...item }
-  }
-
-  const renderItem = ({ item } ) => ( 
-     <Card nombre={item.nombre} apellido={item.apellido} celular={item.celular}  />
-  );
-
-
   return (
-    
-    <SafeAreaView style={styles.container}>
+    <NavigationContainer>
+      <Tab.Navigator initialRouteName="Home"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
 
-      <VirtualizedList
-        initialNumToRender={4}
-        data={listCliente}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        getItemCount={getItemCount}
-        getItem={getItem}
-      />
+            if (route.name === 'Home') {
+              iconName = focused
+                ? 'md-home'
+                : 'md-home';
+            } else if (route.name === 'Create') {
+              iconName = focused ? 'md-create' : 'md-create';
+            }
 
-    </SafeAreaView>
-   
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'green',
+          inactiveTintColor: 'gray',
+        }}
+          >
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Create" component={Create} />
+     </Tab.Navigator>
+   </NavigationContainer>  
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 22,
-    
-  },
-  
-
-});
 
 export default App;
