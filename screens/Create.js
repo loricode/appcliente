@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { post } from 'axios';
 
-const baseURL = 'http://192.168.1.10:8000/';
+const baseURL = 'http://192.168.1.5:8000/';
 
 const Create = () => {
 
@@ -52,6 +52,7 @@ const Create = () => {
                 onChangeText={setCelular}
                 value={celular}
             />
+            
             <TouchableOpacity
                 style={styles.button}
                 onPress={addCliente}
